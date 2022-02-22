@@ -172,39 +172,55 @@ public class Board implements IBoard {
         }
         switch (sens) {
             case EAST:
-                if (coords.getX() + ship.getTaille() > this.width)
+                if (coords.getX() + ship.getTaille() > this.width) {
+                    System.out.println("can't place the ship here");
                     return false;
+                }
 
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    if (this.ship_board[coords.getX() + i][coords.getY()] != '.')
+                    if (this.ship_board[coords.getX() + i][coords.getY()] != '.') {
+                        System.out.println("can't place the ship here");
                         return false;
+                    }
                 }
                 break;
             case WEST:
-                if (coords.getX() - ship.getTaille() < -1)
+                if (coords.getX() - ship.getTaille() < -1) {
+                    System.out.println("can't place the ship here");
                     return false;
+                }
 
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    if (this.ship_board[coords.getX() - i][coords.getY()] != '.')
+                    if (this.ship_board[coords.getX() - i][coords.getY()] != '.') {
+                        System.out.println("can't place the ship here");
                         return false;
+                    }
                 }
                 break;
             case NORTH:
-                if (coords.getY() - ship.getTaille() < -1)
+                if (coords.getY() - ship.getTaille() < -1) {
+                    System.out.println("can't place the ship here");
                     return false;
+                }
 
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    if (this.ship_board[coords.getX()][coords.getY() - i] != '.')
+                    if (this.ship_board[coords.getX()][coords.getY() - i] != '.') {
+                        System.out.println("can't place the ship here");
                         return false;
+                    }
                 }
                 break;
             case SOUTH:
-                if (coords.getY() + ship.getTaille() > this.height)
+                if (coords.getY() + ship.getTaille() > this.height) {
+                    System.out.println("can't place the ship here");
                     return false;
+                }
 
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    if (this.ship_board[coords.getX()][coords.getY() + i] != '.')
+                    if (this.ship_board[coords.getX()][coords.getY() + i] != '.') {
+                        System.out.println("can't place the ship here");
                         return false;
+                    }
                 }
                 break;
         }
