@@ -1,4 +1,5 @@
 package ensta.model;
+
 public class Board {
 
     private String name;
@@ -95,6 +96,7 @@ public class Board {
             }
             System.out.printf("\n");
         }
+        System.out.printf("\n");
     }
 
 }
