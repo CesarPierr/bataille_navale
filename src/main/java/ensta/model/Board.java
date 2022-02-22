@@ -1,6 +1,9 @@
 package ensta.model;
 
-public class Board {
+import ensta.model.IBoard;
+import ensta.util.Orientation;
+
+public class Board implements IBoard {
 
     private String name;
     private char[][] ship_board;
@@ -80,9 +83,9 @@ public class Board {
                     System.out.printf("%3d", row);
                 } else {
                     if (col / largeur == 0)
-                        System.out.printf("%3c", this.ship_board[row - 1][col - 1]);
+                        System.out.printf("%3c", this.ship_board[col - 1][row - 1]);
                     else if (col / largeur >= 1) {
-                        boolean value = this.touched[row - 1][col % largeur - 1];
+                        boolean value = this.touched[col % largeur - 1][row - 1];
                         if (value) {
                             System.out.printf("%3c", 'x');
                         } else {
@@ -97,6 +100,115 @@ public class Board {
             System.out.printf("\n");
         }
         System.out.printf("\n");
+    }
+
+    @Override
+    public int getSize() {
+        return this.width;
+    }
+
+    @Override
+    public boolean putShip(AbstractShip ship, Coords coords) {
+        Orientation sens = ship.getSens();
+        if (!this.canPutShip(ship, coords))
+            return false;
+
+        switch (sens) {
+            case EAST:
+                for (int i = 0; i < ship.getTaille(); i++) {
+                    this.ship_board[coords.getX() + i][coords.getY()] = ship.getLabel();
+                }
+                break;
+            case WEST:
+                for (int i = 0; i < ship.getTaille(); i++) {
+                    this.ship_board[coords.getX() - i][coords.getY()] = ship.getLabel();
+                }
+                break;
+            case NORTH:
+                for (int i = 0; i < ship.getTaille(); i++) {
+                    this.ship_board[coords.getX()][coords.getY() - i] = ship.getLabel();
+                }
+                break;
+            case SOUTH:
+                for (int i = 0; i < ship.getTaille(); i++) {
+                    this.ship_board[coords.getX()][coords.getY() + i] = ship.getLabel();
+                }
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean hasShip(Coords coords) {
+        if (this.ship_board[coords.getX()][coords.getY()] != '.')
+            return true;
+        return false;
+    }
+
+    @Override
+    public void setHit(boolean hit, Coords coords) {
+        this.touched[coords.getX()][coords.getY()] = hit;
+    }
+
+    @Override
+    public Boolean getHit(Coords coords) {
+        return this.touched[coords.getX()][coords.getY()];
+    }
+
+    @Override
+    public Hit sendHit(Coords res) {
+        if (this.ship_board[res.getX()][res.getY()] == '.')
+            return Hit.MISS;
+        this.setHit(true, res);
+        return Hit.STRIKE;
+    }
+
+    @Override
+    public boolean canPutShip(AbstractShip ship, Coords coords) {
+        Orientation sens = ship.getSens();
+        if (coords.getX() < 0 || coords.getX() >= this.width || coords.getY() < 0 || coords.getY() >= this.height) {
+            System.out.println("wrong coord X or Y");
+            return false;
+        }
+        switch (sens) {
+            case EAST:
+                if (coords.getX() + ship.getTaille() > this.width)
+                    return false;
+
+                for (int i = 0; i < ship.getTaille(); i++) {
+                    if (this.ship_board[coords.getX() + i][coords.getY()] != '.')
+                        return false;
+                }
+                break;
+            case WEST:
+                if (coords.getX() - ship.getTaille() < -1)
+                    return false;
+
+                for (int i = 0; i < ship.getTaille(); i++) {
+                    if (this.ship_board[coords.getX() - i][coords.getY()] != '.')
+                        return false;
+                }
+                break;
+            case NORTH:
+                if (coords.getY() - ship.getTaille() < -1)
+                    return false;
+
+                for (int i = 0; i < ship.getTaille(); i++) {
+                    if (this.ship_board[coords.getX()][coords.getY() - i] != '.')
+                        return false;
+                }
+                break;
+            case SOUTH:
+                if (coords.getY() + ship.getTaille() > this.height)
+                    return false;
+
+                for (int i = 0; i < ship.getTaille(); i++) {
+                    if (this.ship_board[coords.getX()][coords.getY() + i] != '.')
+                        return false;
+                }
+                break;
+        }
+        return true;
     }
 
 }
