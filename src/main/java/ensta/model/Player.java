@@ -2,11 +2,10 @@ package ensta.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Arrays;
+
 import ensta.model.AbstractShip;
 import ensta.util.Orientation;
 import ensta.view.InputHelper;
-import ensta.view.InputHelper.ShipInput;
 
 public class Player {
 	/*
@@ -38,37 +37,15 @@ public class Player {
 	public void putShips() {
 		boolean done = false;
 		int i = 0;
-		String[] validOrientations = { "north", "south", "east", "west" };
-		do {
 
+		do {
 			AbstractShip ship = ships[i];
-			boolean placed = false;
-			do {
-				String msg = String.format("placer %d : %s(%d)", i + 1, ship.getName(), ship.getTaille());
-				System.out.println(msg);
-				Orientation sens = Orientation.EAST;
-				Coords place = new Coords();
-				InputHelper.ShipInput res = InputHelper.readShipInput();
-				switch (Arrays.asList(validOrientations).indexOf(res.orientation)) {
-					case 0:
-						sens = Orientation.NORTH;
-						break;
-					case 1:
-						sens = Orientation.SOUTH;
-						break;
-					case 2:
-						sens = Orientation.EAST;
-						break;
-					case 3:
-						sens = Orientation.WEST;
-						break;
-				}
-				ship.setSens(sens);
-				place.setX(res.x);
-				place.setY(res.y);
-				placed = this.board.putShip(ship, place);
-			} while (!placed);
-			board.print();
+			String msg = String.format("placer %d : %s(%d)", i + 1, ship.getName(), ship.getTaille());
+			System.out.println(msg);
+			InputHelper.ShipInput res = InputHelper.readShipInput();
+			// TODO set ship orientation
+			// TODO put ship at given position
+			// TODO when ship placement successful
 			++i;
 			done = i == 5;
 
@@ -83,8 +60,16 @@ public class Player {
 		do {
 			System.out.println("où frapper?");
 			InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
+			Coords send = new Coords(hitInput.x, hitInput.y);
 			// TODO call sendHit on this.opponentBoard
-
+			Hit result = this.opponentBoard.sendHit(send);
+			if (result != null) {
+				System.out.println(result);
+				coords = send;
+				return result;
+			} else {
+				System.out.println("warning, can't send hit. Try again");
+			}
 			// TODO : Game expects sendHit to return BOTH hit result & hit coords.
 			// return hit is obvious. But how to return coords at the same time ?
 		} while (!done);

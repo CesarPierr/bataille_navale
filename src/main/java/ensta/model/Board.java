@@ -2,57 +2,57 @@ package ensta.model;
 
 import ensta.model.IBoard;
 import ensta.util.Orientation;
+import ensta.model.ShipState;
+import ensta.util.ColorUtil;
 
 public class Board implements IBoard {
 
     private String name;
-    private char[][] ship_board;
-    private boolean[][] touched;
+    private ShipState[][] ship_board;
+    private Boolean[][] touched;
     private int width, height;
 
     public Board(String name, int height, int width) {
         this.name = name;
-        this.ship_board = new char[height][width];
-        this.touched = new boolean[height][width];
+        this.ship_board = new ShipState[height][width];
+        this.touched = new Boolean[height][width];
         this.width = width;
         this.height = height;
         for (int row = 0; row < this.height; row++) {
 
             for (int col = 0; col < this.width; col++) {
-                this.ship_board[row][col] = '.';
-                this.touched[row][col] = false;
+                this.ship_board[row][col] = new ShipState();
             }
         }
     }
 
     public Board(String name) {
         this.name = name;
-        this.ship_board = new char[10][10];
-        this.touched = new boolean[10][10];
+        this.ship_board = new ShipState[10][10];
+        this.touched = new Boolean[10][10];
         this.width = 10;
         this.height = 10;
         for (int row = 0; row < this.height; row++) {
 
             for (int col = 0; col < this.width; col++) {
-                this.ship_board[row][col] = '.';
-                this.touched[row][col] = false;
+                this.ship_board[row][col] = new ShipState();
             }
         }
     }
 
-    public char[][] getShip_board() {
+    public ShipState[][] getShip_board() {
         return this.ship_board;
     }
 
-    public void setShip_board(char[][] ship_board) {
+    public void setShip_board(ShipState[][] ship_board) {
         this.ship_board = ship_board;
     }
 
-    public boolean[][] getTouched() {
+    public Boolean[][] getTouched() {
         return this.touched;
     }
 
-    public void setTouched(boolean[][] touched) {
+    public void setTouched(Boolean[][] touched) {
         this.touched = touched;
     }
 
@@ -83,13 +83,26 @@ public class Board implements IBoard {
                     System.out.printf("%3d", row);
                 } else {
                     if (col / largeur == 0)
-                        System.out.printf("%3c", this.ship_board[col - 1][row - 1]);
+                        if (this.ship_board[col - 1][row - 1].getShip() == null)
+                            if (this.ship_board[col - 1][row - 1].isStruck())
+                                System.out.printf(ColorUtil.colorize("  X", ColorUtil.Color.WHITE));
+                            else
+                                System.out.printf("%3s", ".");
+
+                        else {
+                            if (this.ship_board[col - 1][row - 1].isStruck())
+                                System.out.printf(ColorUtil.colorize("  X", ColorUtil.Color.RED));
+                            else
+                                System.out.printf("%3s", this.ship_board[col - 1][row - 1]);
+                        }
                     else if (col / largeur >= 1) {
-                        boolean value = this.touched[col % largeur - 1][row - 1];
-                        if (value) {
-                            System.out.printf("%3c", 'x');
-                        } else {
+                        if (touched[col % largeur - 1][row - 1] == null) {
                             System.out.printf("%3c", '.');
+                        } else {
+
+                            System.out.printf((touched[col % largeur - 1][row - 1]
+                                    ? ColorUtil.colorize("  X", ColorUtil.Color.RED)
+                                    : ColorUtil.colorize("  X", ColorUtil.Color.WHITE)));
                         }
                     }
 
@@ -110,28 +123,28 @@ public class Board implements IBoard {
     @Override
     public boolean putShip(AbstractShip ship, Coords coords) {
         Orientation sens = ship.getSens();
-        if (!this.canPutShip(ship, coords))
+        if (this.canPutShip(ship, coords) == false)
             return false;
 
         switch (sens) {
             case EAST:
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    this.ship_board[coords.getX() + i][coords.getY()] = ship.getLabel();
+                    this.ship_board[coords.getX() + i][coords.getY()] = new ShipState(ship);
                 }
                 break;
             case WEST:
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    this.ship_board[coords.getX() - i][coords.getY()] = ship.getLabel();
+                    this.ship_board[coords.getX() - i][coords.getY()] = new ShipState(ship);
                 }
                 break;
             case NORTH:
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    this.ship_board[coords.getX()][coords.getY() - i] = ship.getLabel();
+                    this.ship_board[coords.getX()][coords.getY() - i] = new ShipState(ship);
                 }
                 break;
             case SOUTH:
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    this.ship_board[coords.getX()][coords.getY() + i] = ship.getLabel();
+                    this.ship_board[coords.getX()][coords.getY() + i] = new ShipState(ship);
                 }
                 break;
         }
@@ -140,9 +153,9 @@ public class Board implements IBoard {
 
     @Override
     public boolean hasShip(Coords coords) {
-        if (this.ship_board[coords.getX()][coords.getY()] != '.')
-            return true;
-        return false;
+        if (this.ship_board[coords.getX()][coords.getY()] == null)
+            return false;
+        return true;
     }
 
     @Override
@@ -157,10 +170,23 @@ public class Board implements IBoard {
 
     @Override
     public Hit sendHit(Coords res) {
-        if (this.ship_board[res.getX()][res.getY()] == '.')
-            return Hit.MISS;
-        this.setHit(true, res);
-        return Hit.STRIKE;
+        if (this.ship_board[res.getX()][res.getY()].isStruck()) {
+            System.out.println("warning : already Struck");
+            return null;
+        } else {
+            this.ship_board[res.getX()][res.getY()].setStruck(true);
+            if (this.ship_board[res.getX()][res.getY()].getShip() == null) {
+                this.setHit(false, res);
+                return Hit.MISS;
+            }
+            this.setHit(true, res);
+            if (this.ship_board[res.getX()][res.getY()].isSunk()) {
+                Hit retour = Hit.fromInt(this.ship_board[res.getX()][res.getY()].getShip().getTaille());
+                System.out.println(retour + " est coulé");
+                return retour;
+            }
+            return Hit.STRIKE;
+        }
     }
 
     @Override
@@ -178,7 +204,7 @@ public class Board implements IBoard {
                 }
 
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    if (this.ship_board[coords.getX() + i][coords.getY()] != '.') {
+                    if (this.ship_board[coords.getX() + i][coords.getY()].getShip() != null) {
                         System.out.println("can't place the ship here");
                         return false;
                     }
@@ -191,7 +217,7 @@ public class Board implements IBoard {
                 }
 
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    if (this.ship_board[coords.getX() - i][coords.getY()] != '.') {
+                    if (this.ship_board[coords.getX() - i][coords.getY()].getShip() != null) {
                         System.out.println("can't place the ship here");
                         return false;
                     }
@@ -204,7 +230,7 @@ public class Board implements IBoard {
                 }
 
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    if (this.ship_board[coords.getX()][coords.getY() - i] != '.') {
+                    if (this.ship_board[coords.getX()][coords.getY() - i].getShip() != null) {
                         System.out.println("can't place the ship here");
                         return false;
                     }
@@ -217,7 +243,7 @@ public class Board implements IBoard {
                 }
 
                 for (int i = 0; i < ship.getTaille(); i++) {
-                    if (this.ship_board[coords.getX()][coords.getY() + i] != '.') {
+                    if (this.ship_board[coords.getX()][coords.getY() + i].getShip() != null) {
                         System.out.println("can't place the ship here");
                         return false;
                     }

@@ -11,6 +11,7 @@ public class TestBoard {
         Battleship bat = new Battleship(Orientation.SOUTH);
         Coords c1 = new Coords(0, 0);
         Coords c2 = new Coords(3, 1);
+        Coords c21 = new Coords(2, 1);
         Coords c3 = new Coords(8, 7);
         Coords c4 = new Coords(7, 3);
 
@@ -22,6 +23,11 @@ public class TestBoard {
         System.out.println(grille.sendHit(c2));
 
         System.out.println(grille.getHit(c2));
+        System.out.println(grille.sendHit(c2));
+        grille.print();
+        System.out.println(grille.sendHit(c21));
+
+        System.out.println(grille.getHit(c21));
         grille.print();
 
     }
