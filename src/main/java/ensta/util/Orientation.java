@@ -22,6 +22,7 @@ public enum Orientation {
 	}
 
 	public static Orientation randomOrientation() {
-		return VALUES.get(RANDOM.nextInt(SIZE));
+		Orientation sens = VALUES.get(RANDOM.nextInt(SIZE));
+		return sens;
 	}
 }

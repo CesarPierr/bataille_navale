@@ -1,12 +1,17 @@
 package ensta.util;
+
 public class ColorUtil {
 
-    /* ***
-     * Constructeur de la classe ColorUtil, utilisable uniquement par la classe elle-même
+    /*
+     * ***
+     * Constructeur de la classe ColorUtil, utilisable uniquement par la classe
+     * elle-même
      */
-    private ColorUtil() {};
+    private ColorUtil() {
+    };
 
-    /* ***
+    /*
+     * ***
      * enum Color interne à la classe ColorUtil
      */
     public enum Color {
@@ -20,12 +25,14 @@ public class ColorUtil {
         CYAN("\u001B[36m"),
         WHITE("\u001B[37m");
 
-        /* ***
+        /*
+         * ***
          * Attribut de l'enum Color
          */
         private final String value;
 
-        /* ***
+        /*
+         * ***
          * Constructeur de l'enum Color
          */
         Color(String value) {
@@ -33,7 +40,8 @@ public class ColorUtil {
         }
     }
 
-    /* ***
+    /*
+     * ***
      * Méthodes de la classe ColorUtil
      */
     public static String colorize(String text, Color color) {

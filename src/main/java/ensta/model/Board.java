@@ -40,6 +40,10 @@ public class Board implements IBoard {
         }
     }
 
+    public Board() {
+        this("noname");
+    }
+
     public ShipState[][] getShip_board() {
         return this.ship_board;
     }
@@ -172,7 +176,10 @@ public class Board implements IBoard {
     public Hit sendHit(Coords res) {
         if (this.ship_board[res.getX()][res.getY()].isStruck()) {
             System.out.println("warning : already Struck");
-            return null;
+            if (this.ship_board[res.getX()][res.getY()].getShip() == null) {
+                return Hit.MISS;
+            }
+            return Hit.STRIKE;
         } else {
             this.ship_board[res.getX()][res.getY()].setStruck(true);
             if (this.ship_board[res.getX()][res.getY()].getShip() == null) {
