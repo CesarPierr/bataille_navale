@@ -1,21 +1,24 @@
 package ensta.controller;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import ensta.model.Board;
 import ensta.model.Coords;
 import ensta.model.Hit;
 import ensta.model.Player;
-import ensta.model.AbstractShip;
-import ensta.model.Battleship;
-import ensta.model.Carrier;
-import ensta.model.Destroyer;
-import ensta.model.Submarine;
+import ensta.model.ship.AbstractShip;
+import ensta.model.ship.Battleship;
+import ensta.model.ship.Carrier;
+import ensta.model.ship.Destroyer;
+import ensta.model.ship.Submarine;
 import ensta.util.ColorUtil;
+import ensta.ai.PlayerAI;
 
 public class Game {
 
@@ -39,12 +42,21 @@ public class Game {
 
 	public Game init() {
 		if (!loadSave()) {
-
-			// TODO init boards
-
-			// TODO init this.player1 & this.player2
-
-			// TODO place player ships
+			List<AbstractShip> bateaux = new ArrayList<AbstractShip>();
+			bateaux.add(new Carrier());
+			bateaux.add(new Destroyer());
+			bateaux.add(new Submarine());
+			bateaux.add(new Submarine());
+			bateaux.add(new Battleship());
+			Board Bplayer1 = new Board();
+			Board Bplayer2 = new Board();
+			
+			this.player1 = new Player(Bplayer1,Bplayer2,bateaux);
+			this.player2 = new PlayerAI(Bplayer2,Bplayer1,bateaux);
+			
+			player1.putShips();
+			player2.putShips();
+			
 		}
 		return this;
 	}
@@ -61,9 +73,9 @@ public class Game {
 		b1.print();
 		boolean done;
 		do {
-			hit = Hit.MISS; // TODO player1 send a hit
+			hit = player1.sendHit(coords);
 			boolean strike = hit != Hit.MISS; // TODO set this hit on his board (b1)
-
+			b1.setHit(strike, coords);
 			done = updateScore();
 			b1.print();
 			System.out.println(makeHitMessage(false /* outgoing hit */, coords, hit));
@@ -72,7 +84,7 @@ public class Game {
 
 			if (!done && !strike) {
 				do {
-					hit = Hit.MISS; // TODO player2 send a hit.
+					hit = player2.sendHit(coords); // TODO player2 send a hit.
 
 					strike = hit != Hit.MISS;
 					if (strike) {

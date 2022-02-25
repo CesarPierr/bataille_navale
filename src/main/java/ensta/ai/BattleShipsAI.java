@@ -1,11 +1,12 @@
 package ensta.ai;
 
 import java.io.Serializable;
+
 import java.util.Random;
 import ensta.model.Coords;
 import ensta.model.Hit;
 import ensta.model.IBoard;
-import ensta.model.AbstractShip;
+import ensta.model.ship.AbstractShip;
 import ensta.util.Orientation;
 
 public class BattleShipsAI implements Serializable {

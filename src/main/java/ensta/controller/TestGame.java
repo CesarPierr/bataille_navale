@@ -1,6 +1,7 @@
 package ensta.controller;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -10,12 +11,12 @@ import ensta.model.Board;
 import ensta.model.Coords;
 import ensta.model.Hit;
 import ensta.model.Player;
-import ensta.model.AbstractShip;
+import ensta.model.ship.AbstractShip;
 import ensta.ai.BattleShipsAI;
-import ensta.model.Battleship;
-import ensta.model.Carrier;
-import ensta.model.Destroyer;
-import ensta.model.Submarine;
+import ensta.model.ship.Battleship;
+import ensta.model.ship.Carrier;
+import ensta.model.ship.Destroyer;
+import ensta.model.ship.Submarine;
 import ensta.util.ColorUtil;
 
 public class TestGame {
@@ -47,7 +48,7 @@ public class TestGame {
                 detruits++;
             }
             board.print();
-            sleep(500);
+            sleep(50);
         }
     }
 }

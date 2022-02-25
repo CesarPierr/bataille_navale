@@ -1,6 +1,7 @@
 package ensta.model;
 
 import ensta.util.Orientation;
+import ensta.model.ship.*;
 
 public class TestBoard {
     public static void main(String args[]) {

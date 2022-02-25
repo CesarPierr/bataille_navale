@@ -1,9 +1,11 @@
 package ensta.model;
 
 import ensta.model.IBoard;
+
 import ensta.util.Orientation;
-import ensta.model.ShipState;
+import ensta.model.ship.ShipState;
 import ensta.util.ColorUtil;
+import ensta.model.ship.AbstractShip;
 
 public class Board implements IBoard {
 
@@ -88,14 +90,12 @@ public class Board implements IBoard {
                 } else {
                     if (col / largeur == 0)
                         if (this.ship_board[col - 1][row - 1].getShip() == null)
-                            if (this.ship_board[col - 1][row - 1].isStruck())
-                                System.out.printf(ColorUtil.colorize("  X", ColorUtil.Color.WHITE));
-                            else
-                                System.out.printf("%3s", ".");
+
+                        	System.out.printf("%3s", ".");
 
                         else {
                             if (this.ship_board[col - 1][row - 1].isStruck())
-                                System.out.printf(ColorUtil.colorize("  X", ColorUtil.Color.RED));
+                                System.out.printf(ColorUtil.colorize("  "+ this.ship_board[col - 1][row - 1].getShip().getLabel(), ColorUtil.Color.RED));
                             else
                                 System.out.printf("%3s", this.ship_board[col - 1][row - 1]);
                         }
@@ -183,10 +183,8 @@ public class Board implements IBoard {
         } else {
             this.ship_board[res.getX()][res.getY()].setStruck(true);
             if (this.ship_board[res.getX()][res.getY()].getShip() == null) {
-                this.setHit(false, res);
                 return Hit.MISS;
             }
-            this.setHit(true, res);
             if (this.ship_board[res.getX()][res.getY()].isSunk()) {
                 Hit retour = Hit.fromInt(this.ship_board[res.getX()][res.getY()].getShip().getTaille());
                 System.out.println(retour + " est coulé");

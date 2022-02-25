@@ -1,6 +1,6 @@
-package ensta.model;
+package ensta.model.ship;
 
-import ensta.model.AbstractShip;
+import ensta.model.ship.AbstractShip;
 
 public class ShipState {
     private AbstractShip ship;

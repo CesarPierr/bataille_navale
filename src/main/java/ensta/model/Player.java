@@ -1,9 +1,10 @@
 package ensta.model;
 
 import java.io.Serializable;
+
 import java.util.List;
 
-import ensta.model.AbstractShip;
+import ensta.model.ship.AbstractShip;
 import ensta.util.Orientation;
 import ensta.view.InputHelper;
 
@@ -35,17 +36,24 @@ public class Player {
 	 * coodrinates.
 	 */
 	public void putShips() {
-		boolean done = false;
+		boolean done = false, done2 = false;
 		int i = 0;
 
 		do {
 			AbstractShip ship = ships[i];
-			String msg = String.format("placer %d : %s(%d)", i + 1, ship.getName(), ship.getTaille());
-			System.out.println(msg);
-			InputHelper.ShipInput res = InputHelper.readShipInput();
-			// TODO set ship orientation
-			// TODO put ship at given position
-			// TODO when ship placement successful
+			do {
+				String msg = String.format("placer %d : %s(%d)", i + 1, ship.getName(), ship.getTaille());
+				System.out.println(msg);
+				InputHelper.ShipInput res = InputHelper.readShipInput();
+				Orientation sens = Orientation.fromString(res.orientation);
+				ship.setSens(sens);
+				done2 = board.putShip(ship, new Coords(res.x,res.y));
+	
+				// TODO set ship orientation
+				// TODO put ship at given position
+				// TODO when ship placement successful
+			} while (!done2);
+			done2 = false;
 			++i;
 			done = i == 5;
 
@@ -54,27 +62,16 @@ public class Player {
 	}
 
 	public Hit sendHit(Coords coords) {
-		boolean done = false;
-		Hit hit = null;
-
-		do {
-			System.out.println("où frapper?");
-			InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
-			Coords send = new Coords(hitInput.x, hitInput.y);
-			// TODO call sendHit on this.opponentBoard
-			Hit result = this.opponentBoard.sendHit(send);
-			if (result != null) {
-				System.out.println(result);
-				coords = send;
-				return result;
-			} else {
-				System.out.println("warning, can't send hit. Try again");
-			}
+		System.out.println("où frapper?");
+		InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
+		Coords send = new Coords(hitInput.x, hitInput.y);
+		// TODO call sendHit on this.opponentBoard
+		Hit result = this.opponentBoard.sendHit(send);
+		coords.setCoords(send);
 			// TODO : Game expects sendHit to return BOTH hit result & hit coords.
 			// return hit is obvious. But how to return coords at the same time ?
-		} while (!done);
-
-		return hit;
+		
+		return result;
 	}
 
 	public AbstractShip[] getShips() {

@@ -1,6 +1,7 @@
 package ensta.model;
 
-import ensta.model.AbstractShip;
+import ensta.model.ship.AbstractShip;
+
 import ensta.model.Hit;
 import ensta.model.Coords;
 

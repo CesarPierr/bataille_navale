@@ -20,6 +20,18 @@ public enum Orientation {
 	public int getIncrement() {
 		return increment;
 	}
+	
+	public static Orientation fromString(String sens) {
+		if(sens.equals("north"))
+			return Orientation.NORTH;
+		else if (sens.equals("south"))
+			return Orientation.SOUTH;
+		else if (sens.equals("east"))
+			return Orientation.EAST;
+		else if (sens.equals("west"))
+			return Orientation.WEST;
+		return Orientation.EAST;
+	}
 
 	public static Orientation randomOrientation() {
 		Orientation sens = VALUES.get(RANDOM.nextInt(SIZE));

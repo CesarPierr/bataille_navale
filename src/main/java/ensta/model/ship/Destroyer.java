@@ -1,4 +1,4 @@
-package ensta.model;
+package ensta.model.ship;
 
 import ensta.util.Orientation;
 
